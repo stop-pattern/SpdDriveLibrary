@@ -21,6 +21,7 @@
 
 
 // pin number settings
+constexpr uint8_t registerCount = 6;
 constexpr uint8_t PWM0 = PIN_PWM0;
 constexpr uint8_t PWM1 = PIN_PWM1;
 constexpr uint8_t SCL = 32; // shift register clear
