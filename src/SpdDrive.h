@@ -6,8 +6,8 @@
 class SpdDrive
 {
 private:
-    std::array<LedcParam*, 2> needle;       // 針
-    std::array<std::bitset<8>, registerCount> shiftRegister;   // シフトレジスタ
+    std::array<LedcParam*, 2> needle;                           // 針
+    std::array<std::bitset<8>, registerCount> shiftRegister;    // シフトレジスタ
 
     // PWM初期設定
     void setPWM1(const uint8_t output_pin, uint8_t ch = 0, uint8_t bit = 16, double freq = 1220);

@@ -10,8 +10,6 @@
 
 
 SpdDrive::SpdDrive(/* args */) {
-    setPWM1(PWM0, 0, 16);
-    setPWM2(PWM1, 1, 16);
 }
 
 SpdDrive::~SpdDrive() {
@@ -19,6 +17,10 @@ SpdDrive::~SpdDrive() {
     delete needle[1];
 }
 
+void SpdDrive::begin() {
+    setPWM1(PWM0, 0, 16);
+    setPWM2(PWM1, 1, 16);
+}
 
 void SpdDrive::setPWM1(const uint8_t output_pin, uint8_t ch, uint8_t bit, double freq) {
     needle[0] = new LedcParam(output_pin, ch, bit, freq);
