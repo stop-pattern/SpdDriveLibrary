@@ -21,6 +21,7 @@ LedcParam::~LedcParam() {
     ledcDetachPin(pin);
 }
 
+
 void LedcParam::setupLedc() {
     frequency = ledcSetup(channel, frequency, duty_bit);
     ledcAttachPin(pin, channel);

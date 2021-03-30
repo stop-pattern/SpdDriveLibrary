@@ -1,6 +1,7 @@
 #ifndef LEDCPARAM_H
 #define LEDCPARAM_H
 
+
 // ledcのPWMをラップするクラス
 class LedcParam
 {
@@ -13,7 +14,6 @@ private:
 
     // 現在保持する条件でledcを設定
     void setupLedc();
-
 public:
     LedcParam(const uint8_t output_pin, uint8_t ch = 0, uint8_t bit = 16, double freq = 1220);
     ~LedcParam();
@@ -24,5 +24,6 @@ public:
     // デューティ比を表すビット数を取得
     uint8_t getLedcBit();
 };
+
 
 #endif //LEDCPARAM_H
