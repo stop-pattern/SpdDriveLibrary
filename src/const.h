@@ -4,6 +4,7 @@
 
 // pin num define
 #ifdef SAHA
+// for rev.2(additionally modificated)
 #define PIN_PWM0 19
 #define PIN_PWM1 18
 #endif //SAHA
