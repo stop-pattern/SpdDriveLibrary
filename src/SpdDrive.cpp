@@ -134,6 +134,11 @@ void SpdDrive::setBackLight(bool status) {
     temp[4].set(5,status);
     setLeds(temp);
 }
+void SpdDrive::setDoor(bool status) {
+    std::array<std::bitset<8>, registerCount> temp = shiftRegister;
+    temp[4].set(6,status);
+    setLeds(temp);
+}
 void SpdDrive::setAts(bool status) {
     std::array<std::bitset<8>, registerCount> temp = shiftRegister;
     temp[5].set(0,status);

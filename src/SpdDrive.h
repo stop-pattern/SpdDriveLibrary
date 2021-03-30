@@ -47,6 +47,7 @@ public:
     void setAtcP(bool status);
     void setAtcNotice(bool status);
     void setBackLight(bool status);
+    void setDoor(bool status);
     void setAts(bool status);
     void setAts15(bool status);
     void setAts60(bool status);
