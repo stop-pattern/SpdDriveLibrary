@@ -14,6 +14,8 @@ LedcParam::LedcParam(const uint8_t output_pin, uint8_t ch, uint8_t bit, double f
     frequency = freq;
     duty_bit = bit;
 
+    pinMode(output_pin, OUTPUT);
+
     setupLedc();
 }
 
