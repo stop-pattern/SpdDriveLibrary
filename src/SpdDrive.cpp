@@ -9,12 +9,14 @@
 #include "SpdDrive.h"
 
 
-SpdDrive::SpdDrive(/* args */) {
+SpdDrive::SpdDrive() {
 }
 
 SpdDrive::~SpdDrive() {
+    /*
     delete needle[0];
     delete needle[1];
+    */
 }
 
 void SpdDrive::begin() {
@@ -23,11 +25,11 @@ void SpdDrive::begin() {
 }
 
 void SpdDrive::setPWM1(const uint8_t output_pin, uint8_t ch, uint8_t bit, double freq) {
-    needle[0] = new LedcParam(output_pin, ch, bit, freq);
+    needle[0] = LedcParam(output_pin, ch, bit, freq);
 }
 
 void SpdDrive::setPWM2(const uint8_t output_pin, uint8_t ch, uint8_t bit, double freq) {
-    needle[0] = new LedcParam(output_pin, ch, bit, freq);
+    needle[0] = LedcParam(output_pin, ch, bit, freq);
 }
 
 
@@ -38,11 +40,11 @@ double SpdDrive::setPWMvalue(LedcParam *ledc, uint32_t value) {
 }
 
 double SpdDrive::setPWM1value(uint32_t value) {
-    return setPWMvalue(needle[0], value);
+    return setPWMvalue(&needle[0], value);
 }
 
 double SpdDrive::setPWM2value(uint32_t value) {
-    return setPWMvalue(needle[1], value);
+    return setPWMvalue(&needle[1], value);
 }
 
 
@@ -55,102 +57,99 @@ uint32_t SpdDrive::setPWMduty(LedcParam *ledc, double duty) {
 }
 
 uint32_t SpdDrive::setPWM1duty(double duty) {
-    return setPWMduty(needle[0], duty);
+    return setPWMduty(&needle[0], duty);
 }
 
 uint32_t SpdDrive::setPWM2duty(double duty) {
-    return setPWMduty(needle[1], duty);
+    return setPWMduty(&needle[1], duty);
 }
 
-void SpdDrive::outputLeds(std::array<std::bitset<8>, registerCount> array) {
-    std::array<uint8_t, registerCount> out = {};
-    for (size_t i = 0; i < registerCount; i++) {
-        // std::bitset<8> to uint8_t
-        out[i] = array[i].to_ulong();   // この実装気持ち悪いから何とかしたい
-    }
-    
-    for (size_t i = 0; i < array.size(); i++)
+void SpdDrive::outputLeds(uint8_t array[registerCount]) {
+    for (size_t i = 0; i < registerCount; i++)
     {
-        shiftOut(SER, SCK, MSBFIRST, out[i]);
+        shiftOut(SER_DIO, SER_SCK, MSBFIRST, array[i]);
     }
-    digitalWrite(RCK, LOW);
-    digitalWrite(RCK, HIGH);
-    shiftRegister = array;
+    digitalWrite(SER_RCK, LOW);
+    digitalWrite(SER_RCK, HIGH);
+    
+    for (size_t i = 0; i < registerCount; i++) {
+        shiftRegister[i] = array[i];
+    }
 }
 
-void SpdDrive::setLeds(std::array<std::bitset<8>, registerCount> array) {
+void SpdDrive::setLeds(uint8_t array[registerCount]) {
     if (array == shiftRegister) return;
     outputLeds(array);
 }
 
 void SpdDrive::setAtcIndicators(uint32_t ind) {
-    std::array<std::bitset<8>, registerCount> array = shiftRegister;
+    uint8_t array[registerCount] = {};
+    for (size_t i = 0; i < registerCount; i++) {
+        array[i] = shiftRegister[i];
+    }
 
+    uint8_t temp = 0;
     for (size_t i = 0; i < 4; i++) {
-        array[i] = ind;
-        ind >> 8;
+        temp |= ind & 0b11111111;
+        array[i] = temp;
+        ind = ind >> 8;
     }
     /*
     temp |= ind & 0b11111111;
     array[0] = temp;
-    ind >> 8;
+    ind = ind >> 8;
     temp |= ind & 0b11111111;
     array[1] = temp;
-    ind >> 8;
+    ind = ind >> 8;
     temp |= ind & 0b11111111;
     array[2] = temp;
     */
-    
+
+    setLeds(array);
+}
+
+uint8_t SpdDrive::setBit(uint8_t in, uint8_t digit, bool status) {
+    if(digit >= 8) digit = 8;
+    uint8_t ret = in & ~(1 << digit);
+    return ret | (status << digit);
+}
+
+void SpdDrive::setLedsWrapper(uint8_t a, uint8_t b, bool status) {
+    uint8_t array[registerCount] = {};
+    for (size_t i = 0; i < registerCount; i++) {
+        array[i] = shiftRegister[i];
+    }
+    array[a] = setBit(array[a], b, status);
     setLeds(array);
 }
 
 void SpdDrive::setAtcG(bool status) {
-    std::array<std::bitset<8>, registerCount> temp = shiftRegister;
-    temp[4].set(0,status);
-    setLeds(temp);
+    setLedsWrapper(4, 0, status);
 }
 void SpdDrive::setAtcR(bool status) {
-    std::array<std::bitset<8>, registerCount> temp = shiftRegister;
-    temp[4].set(1,status);
-    setLeds(temp);
+    setLedsWrapper(4, 1, status);
 }
 void SpdDrive::setAtcX(bool status) {
-    std::array<std::bitset<8>, registerCount> temp = shiftRegister;
-    temp[4].set(2,status);
-    setLeds(temp);
+    setLedsWrapper(4, 2, status);
 }
 void SpdDrive::setAtcP(bool status) {
-    std::array<std::bitset<8>, registerCount> temp = shiftRegister;
-    temp[4].set(3,status);
-    setLeds(temp);
+    setLedsWrapper(4, 3, status);
 }
 void SpdDrive::setAtcNotice(bool status) {
-    std::array<std::bitset<8>, registerCount> temp = shiftRegister;
-    temp[4].set(4,status);
-    setLeds(temp);
+    setLedsWrapper(4, 4, status);
 }
 void SpdDrive::setBackLight(bool status) {
-    std::array<std::bitset<8>, registerCount> temp = shiftRegister;
-    temp[4].set(5,status);
-    setLeds(temp);
+    setLedsWrapper(4, 5, status);
 }
 void SpdDrive::setDoor(bool status) {
-    std::array<std::bitset<8>, registerCount> temp = shiftRegister;
-    temp[4].set(6,status);
-    setLeds(temp);
+    setLedsWrapper(4, 6, status);
 }
 void SpdDrive::setAts(bool status) {
-    std::array<std::bitset<8>, registerCount> temp = shiftRegister;
-    temp[5].set(0,status);
-    setLeds(temp);
+    setLedsWrapper(5, 0, status);
 }
 void SpdDrive::setAts15(bool status) {
-    std::array<std::bitset<8>, registerCount> temp = shiftRegister;
-    temp[5].set(1,status);
-    setLeds(temp);
+    setLedsWrapper(5, 1, status);
 }
 void SpdDrive::setAts60(bool status) {
-    std::array<std::bitset<8>, registerCount> temp = shiftRegister;
-    temp[5].set(2,status);
-    setLeds(temp);
+    setLedsWrapper(5, 2, status);
 }

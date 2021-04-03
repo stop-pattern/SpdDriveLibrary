@@ -24,11 +24,11 @@
 constexpr uint8_t registerCount = 6;
 constexpr uint8_t PWM0 = PIN_PWM0;
 constexpr uint8_t PWM1 = PIN_PWM1;
-constexpr uint8_t SCL = 32; // shift register clear
-constexpr uint8_t SER = 12; // serial data
-constexpr uint8_t SCK = 33; // shift register clock
-constexpr uint8_t RCK = 27; // storage register clock
-constexpr uint8_t G = 14;   // output enable
+constexpr uint8_t SER_SCL = 32; // shift register clear
+constexpr uint8_t SER_DIO = 12; // serial data
+constexpr uint8_t SER_SCK = 33; // shift register clock
+constexpr uint8_t SER_RCK = 27; // storage register clock
+constexpr uint8_t SER_G = 14;   // output enable
 
 
 #undef PIN_PWM0

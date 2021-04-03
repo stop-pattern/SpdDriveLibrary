@@ -2,14 +2,17 @@
 #include <cmath>
 #include <cstdint>
 
+#include "const.h"
 #include "LedcParam.h"
 
+LedcParam::LedcParam() {
+}
 
-LedcParam::LedcParam(const uint8_t output_pin, uint8_t ch, uint8_t bit, double freq) : pin(output_pin)
-{
+LedcParam::LedcParam(uint8_t output_pin, uint8_t ch, uint8_t bit, double freq) {
     if(0 <= ch && ch <= 8) ch = 0;
     if(0 <= bit && bit <= 15) bit = 0;
 
+    pin = output_pin;
     channel = ch;
     frequency = freq;
     duty_bit = bit;

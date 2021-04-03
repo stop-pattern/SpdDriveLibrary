@@ -6,7 +6,7 @@
 class LedcParam
 {
 private:
-    const uint8_t pin;          // 割り当てるピン
+    uint8_t pin;                // 割り当てるピン
     uint8_t channel = 0;        // 利用するチャンネル
     double frequency = 1220;    // PWMの基本周波数
     uint8_t duty_bit = 16;      // デューティ比を表すビット数
@@ -15,7 +15,8 @@ private:
     // 現在保持する条件でledcを設定
     void setupLedc();
 public:
-    LedcParam(const uint8_t output_pin, uint8_t ch = 0, uint8_t bit = 16, double freq = 1220);
+    LedcParam();
+    LedcParam(uint8_t output_pin, uint8_t ch = 0, uint8_t bit = 16, double freq = 1220);
     ~LedcParam();
 
     // 0-2^nの範囲でPWM出力

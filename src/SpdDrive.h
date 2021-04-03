@@ -1,13 +1,15 @@
 #ifndef SPDDRIVE_H
 #define SPDDRIVE_H
 
+#include "const.h"
+#include "LedcParam.h"
 
 // 基板の各種操作をラップするクラス
 class SpdDrive
 {
 private:
-    std::array<LedcParam*, 2> needle;                           // 針
-    std::array<std::bitset<8>, registerCount> shiftRegister;    // シフトレジスタ
+    LedcParam needle[2];                    // 針
+    uint8_t shiftRegister[registerCount];   // シフトレジスタ
 
     // PWM初期設定
     void setPWM1(const uint8_t output_pin, uint8_t ch = 0, uint8_t bit = 16, double freq = 1220);
@@ -20,9 +22,15 @@ private:
     uint32_t setPWMduty(LedcParam *ledc, double value);
 
     // シフトレジスタに値を出力
-    void outputLeds(std::array<std::bitset<8>, registerCount>);
+    void outputLeds(uint8_t array[registerCount]);
+
+    // 指定個所の値を変更して返す
+    uint8_t setBit(uint8_t in, uint8_t digit = 0, bool status = false);
+
+    // 値を変更して出力
+    void setLedsWrapper(uint8_t a, uint8_t b, bool status = false);
 public:
-    SpdDrive(/* args */);
+    SpdDrive();
     ~SpdDrive();
 
     // setup()で動かす用のやつ(初期化)
@@ -37,7 +45,7 @@ public:
     uint32_t setPWM2duty(double duty);
 
     // シフトレジスタに値を出力
-    void setLeds(std::array<std::bitset<8>, registerCount> array);
+    void setLeds(uint8_t array[registerCount]);
 
     // 値を変更
     void setAtcIndicators(uint32_t ind);
